@@ -7,9 +7,8 @@
 #include <memory>
 #include <cstring>
 #include <algorithm>
-#include <filesystem>
+#include <array>
 using namespace std::chrono_literals;
-namespace fs = std::filesystem;
 
 int getRandDigit() {
     static std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
@@ -242,11 +241,9 @@ class GameWithScores: public Game {
     };
   
   public:
-    GameWithScores() {
-        if(fs::exists(SCORES_FILENAME)) {
-            game_results = Files::readGameData<GameResult>(SCORES_FILENAME);
-        }
-    }
+    GameWithScores()
+    : game_results(Files::readGameData<GameResult>(SCORES_FILENAME))
+    { }
     
     void run() override {
         GameResult game_result = runGameFor30s(GameResult::inputNickname());
@@ -284,7 +281,7 @@ class GameWithScores: public Game {
   private:
     static GameResult runGameFor30s(std::string const& nickname) {
         GameResult game_result;
-        std::strcpy(game_result.nickname, nickname.c_str());
+        game_result.setNickname(game_result.nickname);
     
         uint64_t game_delay_mcs = 3 * 1000 * 1000;
         uint64_t cur_game_duration_mcs = 0;
@@ -298,11 +295,6 @@ class GameWithScores: public Game {
         return game_result;
     }
     
-    void readGameResultsFromDisk(std::istream& in) {
-        std::streamsize bytes_in_buffer = in.rdbuf()->in_avail();
-        if(bytes_in_buffer > 0 and bytes_in_buffer);
-    }
-  
   private:
     static char const constexpr* SCORES_FILENAME = "game_scores_30s.bin";
     std::multiset<GameResult> game_results;
@@ -329,11 +321,10 @@ class GameWith3Errors: public Game {
   };
   
   public:
-    GameWith3Errors() {
-        if(fs::exists(SCORES_FILENAME)) {
-            game_results = Files::readGameData<GameResult>(SCORES_FILENAME);
-        }
-    }
+    GameWith3Errors()
+    : game_results(Files::readGameData<GameResult>(SCORES_FILENAME))
+    { }
+    
     
     void run() override {
         GameResult game_result = runGameWith3Errors(GameResult::inputNickname());
@@ -374,12 +365,12 @@ class GameWith3Errors: public Game {
     }
   
   private:
-    static GameResult runGameWith3Errors(std::string nickname) {
+    static GameResult runGameWith3Errors(std::string const& nickname) {
         size_t errors = 3;
         size_t cur_errors = 0;
         
         GameResult game_result;
-        std::strcpy(game_result.nickname, nickname.c_str());
+        game_result.setNickname(game_result.nickname);
         
         while(cur_errors < errors) {
             auto [is_yes, mcs] = Time::getMcsWorkTime(&runGame);
