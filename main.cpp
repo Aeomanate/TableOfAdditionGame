@@ -254,7 +254,7 @@ class GameWithScores: public Game {
   private:
     static GameResult runGameFor30s(std::string const& nickname) {
         GameResult game_result;
-        game_result.setNickname(game_result.nickname);
+        game_result.setNickname(nickname);
     
         uint64_t game_delay_mcs = 30 * 1000 * 1000;
         uint64_t cur_game_duration_mcs = 0;
@@ -343,7 +343,7 @@ class GameWith3Errors: public Game {
         size_t cur_errors = 0;
         
         GameResult game_result;
-        game_result.setNickname(game_result.nickname);
+        game_result.setNickname(nickname);
         
         while(cur_errors < errors) {
             auto [is_yes, mcs] = Time::getMcsWorkTime(&runGame);
