@@ -48,33 +48,6 @@ namespace Chars {
           table(std::move(other)...);
       }
   }
-  
-  template <class String>
-  static inline void ltrim(String&& s) {
-      s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-              [](unsigned char ch) {
-                  return !std::isspace(ch);
-              }
-      ));
-  }
-  template <class String>
-  static inline void rtrim(String&& s) {
-      s.erase(
-          std::find_if(
-              s.rbegin(), s.rend(),
-              [](unsigned char ch) {
-                  return !std::isspace(ch);
-              }
-          ).base(),
-          s.end()
-      );
-  }
-  template <class String>
-  inline auto trim(String&& s) {
-      ltrim(s);
-      rtrim(s);
-      return s;
-  }
 }
 namespace Time {
   template<class Ret, class... Params>
@@ -283,7 +256,7 @@ class GameWithScores: public Game {
         GameResult game_result;
         game_result.setNickname(game_result.nickname);
     
-        uint64_t game_delay_mcs = 3 * 1000 * 1000;
+        uint64_t game_delay_mcs = 30 * 1000 * 1000;
         uint64_t cur_game_duration_mcs = 0;
         while(cur_game_duration_mcs <= game_delay_mcs) {
             auto [is_yes, mcs] = Time::getMcsWorkTime(&runGame);
